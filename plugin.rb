@@ -27,7 +27,7 @@ module ::Poll
 
   def self.get_poll_options(post)
     cooked = PrettyText.cook(post.raw, topic_id: post.topic_id)
-    Nokogiri::HTML(cooked).css("ul li").map {|x| x.children.to_s.strip }.uniq
+    Nokogiri::HTML(cooked).css("ul:first li").map {|x| x.children.to_s.strip }.uniq
   end
 
   def self.vote_key(post, user)
