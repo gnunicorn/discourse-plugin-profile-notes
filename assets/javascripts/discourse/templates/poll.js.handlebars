@@ -1,0 +1,30 @@
+<table>
+  <form>
+    {{#each view.options}}
+      <tr {{bind-attr class=checked:active}}>
+        <td class="radio"><input type="radio" name="poll" {{bind-attr checked=checked disabled=view.loading}} {{action selectOption option target="view"}}></td>
+        <td class="option">
+          <div class="option">
+            {{option}}
+          </div>
+          {{#if view.showResults}}
+            {{!-- TODO i18n and pluralization --}}
+            <div class="result">{{votes}} votes</div>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+  </form>
+</table>
+
+<button {{action toggleShowResults target="view"}}>
+  {{#if view.showResults}}
+    Hide Results
+  {{else}}
+    Show Results
+  {{/if}}
+</button>
+
+{{#if view.loading}}
+  <i class="fa fa-spin fa-spinner"></i>
+{{/if}}
