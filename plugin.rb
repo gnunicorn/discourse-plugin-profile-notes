@@ -17,12 +17,7 @@ module ::Poll
       return false
     end
 
-    unless (topic.title =~ /^poll:/i)
-      # This isn't a poll topic.
-      return false
-    end
-
-    true
+    topic.title =~ /^poll:/i
   end
 
   def self.get_poll_options(post)
