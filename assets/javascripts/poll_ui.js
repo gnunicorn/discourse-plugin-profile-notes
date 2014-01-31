@@ -66,8 +66,15 @@
       });
       view.updateOptionsFromJSON(poll_details);
       view.replaceElement($post.find("ul:first"));
+      this.set('pollView', view);
 
-    }.on('postViewInserted')
+    }.on('postViewInserted'),
+
+    clearPollView: function() {
+      if (this.get('pollView')) {
+        this.get('pollView').destroy();
+      }
+    }.on('willClearRender')
   });
 
 
