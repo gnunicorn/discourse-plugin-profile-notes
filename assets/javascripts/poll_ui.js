@@ -5,7 +5,6 @@
     classNames: ['poll-ui'],
     options: [],
     showResults: false,
-    post_id: null,
 
     updateOptionsFromJSON: function(json) {
       if (json["selected"]) { this.set('showResults', true); }
@@ -29,6 +28,11 @@
 
     actions: {
       selectOption: function(option) {
+        if (!this.get('controller.currentUser.id')) {
+          this.get('controller').send('showLogin');
+          return;
+        }
+
         this.get('options').forEach(function(opt) {
           opt.set('checked', opt.get('option') == option);
         });
@@ -37,7 +41,7 @@
         this.set('loading', true);
         Discourse.ajax("/poll", {
           type: "PUT",
-          data: {post_id: this.get('post_id'), option: option}
+          data: {post_id: this.get('post.id'), option: option}
         }).then(function(newJSON) {
           this.set('showResults', true);
           this.set('loading', false);
@@ -62,7 +66,8 @@
 
       var poll_details = post.get('poll_details');
       var view = this.createChildView(PollView, {
-        post_id: post.get('id')
+        controller: this.get('controller'),
+        post: post
       });
       view.updateOptionsFromJSON(poll_details);
       view.replaceElement($post.find("ul:first"));
