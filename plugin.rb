@@ -12,6 +12,9 @@ module ::Poll
 
     topic = post.topic
 
+    # Topic is not set in a couple of cases in the Discourse test suite.
+    return false if topic.nil?
+
     if post.post_number.nil? and topic.highest_post_number > 0
       # New post, but not the first post in the topic.
       return false
