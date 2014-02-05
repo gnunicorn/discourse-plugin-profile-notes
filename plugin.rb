@@ -5,17 +5,17 @@
 
 load File.expand_path("../poll.rb", __FILE__)
 
-# Without this line we can't lookup the poll constant inside the after_initialize
-# blocks, probably because all of this is instance_eval'd inside an instance of
+# Without this line we can't lookup the constant inside the after_initialize blocks,
+# probably because all of this is instance_eval'd inside an instance of
 # Plugin::Instance.
-Poll = Poll
+PollPlugin = PollPlugin
 
 after_initialize do
   # Rails Engine for accepting votes.
-  module Poll
+  module PollPlugin
     class Engine < ::Rails::Engine
-      engine_name "poll"
-      isolate_namespace Poll
+      engine_name "poll_plugin"
+      isolate_namespace PollPlugin
     end
 
     class PollController < ActionController::Base
@@ -33,31 +33,32 @@ after_initialize do
         end
 
         post = Post.find(params[:post_id])
-        unless Poll::is_poll_post?(post)
+        poll = PollPlugin::Poll.new(post)
+        unless poll.is_poll?
           render status: 400, json: false
           return
         end
 
-        options = Poll.get_details(post)
+        options = poll.details
 
         unless options.keys.include? params[:option]
           render status: 400, json: false
           return
         end
 
-        Poll.set_vote(post, current_user, params[:option])
+        poll.set_vote!(current_user, params[:option])
 
-        render json: Poll.serialize(post, current_user)
+        render json: poll.serialize(current_user)
       end
     end
   end
 
-  Poll::Engine.routes.draw do
+  PollPlugin::Engine.routes.draw do
     put '/' => 'poll#vote'
   end
 
   Discourse::Application.routes.append do
-    mount ::Poll::Engine, at: '/poll'
+    mount ::PollPlugin::Engine, at: '/poll'
   end
 
   # Starting a topic title with "Poll:" will create a poll topic. If the title
@@ -66,9 +67,11 @@ after_initialize do
   Post.class_eval do
     validate :poll_topics_must_contain_a_list
     def poll_topics_must_contain_a_list
-      return unless Poll.is_poll_post?(self)
+      poll = PollPlugin::Poll.new(self)
 
-      if Poll.get_poll_options(self).length == 0
+      return unless poll.is_poll?
+
+      if poll.options.length == 0
         # We have a problem. TODO: i18n?
         self.errors.add(:raw, "must contain a list of poll options.")
       end
@@ -80,9 +83,10 @@ after_initialize do
   Post.class_eval do
     after_save :save_poll_options_to_topic_metadata
     def save_poll_options_to_topic_metadata
-      if Poll.is_poll_post?(self) and self.created_at >= 5.minute.ago
-        details = Poll.get_details(self) || {}
-        new_options = Poll.get_poll_options(self)
+      poll = PollPlugin::Poll.new(self)
+      if poll.is_poll? and self.created_at >= 5.minute.ago
+        details = poll.details || {}
+        new_options = poll.options
         details.each do |key, value|
           unless new_options.include? key
             details.delete(key)
@@ -91,7 +95,7 @@ after_initialize do
         new_options.each do |key|
           details[key] ||= 0
         end
-        Poll.set_details(self, details)
+        poll.set_details! details
       end
     end
   end
@@ -100,10 +104,10 @@ after_initialize do
   PostSerializer.class_eval do
     attributes :poll_details
     def poll_details
-      Poll.serialize(object, scope.user)
+      Poll.new(object).serialize(scope.user)
     end
     def include_poll_details?
-      Poll.is_poll_post?(object)
+      Poll.new(object).is_poll?
     end
   end
 end

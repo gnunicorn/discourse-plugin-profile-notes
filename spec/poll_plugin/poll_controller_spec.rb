@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Poll::PollController, type: :controller do
+describe PollPlugin::PollController, type: :controller do
   let(:topic) { create_topic(title: "Poll: Chitoge vs Onodera") }
   let(:post) { create_post(topic: topic, raw: "Pick one.\n\n* Chitoge\n\n* Onodera") }
   let(:user1) { Fabricate(:user) }
@@ -33,19 +33,19 @@ describe Poll::PollController, type: :controller do
   it "should save votes correctly" do
     log_in_user user1
     xhr :put, :vote, post_id: post.id, option: "<p>Chitoge</p>", use_route: :poll
-    Poll.get_vote(post, user1).should eq("<p>Chitoge</p>")
+    PollPlugin::Poll.new(post).get_vote(user1).should eq("<p>Chitoge</p>")
 
     log_in_user user2
     xhr :put, :vote, post_id: post.id, option: "<p>Onodera</p>", use_route: :poll
-    Poll.get_vote(post, user2).should eq("<p>Onodera</p>")
+    PollPlugin::Poll.new(post).get_vote(user2).should eq("<p>Onodera</p>")
 
-    Poll.get_details(post)["<p>Chitoge</p>"].should eq(1)
-    Poll.get_details(post)["<p>Onodera</p>"].should eq(1)
+    PollPlugin::Poll.new(post).details["<p>Chitoge</p>"].should eq(1)
+    PollPlugin::Poll.new(post).details["<p>Onodera</p>"].should eq(1)
 
     xhr :put, :vote, post_id: post.id, option: "<p>Chitoge</p>", use_route: :poll
-    Poll.get_vote(post, user2).should eq("<p>Chitoge</p>")
+    PollPlugin::Poll.new(post).get_vote(user2).should eq("<p>Chitoge</p>")
 
-    Poll.get_details(post)["<p>Chitoge</p>"].should eq(2)
-    Poll.get_details(post)["<p>Onodera</p>"].should eq(0)
+    PollPlugin::Poll.new(post).details["<p>Chitoge</p>"].should eq(2)
+    PollPlugin::Poll.new(post).details["<p>Onodera</p>"].should eq(0)
   end
 end
