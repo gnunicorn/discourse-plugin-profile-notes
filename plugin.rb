@@ -3,41 +3,11 @@
 # version: 0.1
 # authors: Vikhyat Korrapati
 
-module ::Poll
-  def self.is_poll_post?(post)
-    if !post.post_number.nil? and post.post_number > 1
-      # Not a new post, and also not the first post.
-      return false
-    end
+load File.expand_path("../poll.rb", __FILE__)
 
-    topic = post.topic
-
-    # Topic is not set in a couple of cases in the Discourse test suite.
-    return false if topic.nil?
-
-    if post.post_number.nil? and topic.highest_post_number > 0
-      # New post, but not the first post in the topic.
-      return false
-    end
-
-    topic.title =~ /^poll:/i
-  end
-
-  def self.get_poll_options(post)
-    cooked = PrettyText.cook(post.raw, topic_id: post.topic_id)
-    Nokogiri::HTML(cooked).css("ul:first li").map {|x| x.children.to_s.strip }.uniq
-  end
-
-  def self.vote_key(post, user)
-    "poll_vote_#{post.id}_#{user.id}"
-  end
-
-  def self.details_key(post)
-    "poll_options_#{post.id}"
-  end
-end
-
-# Why is this needed?!
+# Without this line we can't lookup the poll constant inside the after_initialize
+# blocks, probably because all of this is instance_eval'd inside an instance of
+# Plugin::Instance.
 Poll = Poll
 
 after_initialize do
@@ -68,26 +38,16 @@ after_initialize do
           return
         end
 
-        options = ::PluginStore.get("poll", Poll.details_key(post))
+        options = Poll.get_details(post)
 
         unless options.keys.include? params[:option]
           render status: 400, json: false
           return
         end
 
-        # Get the user's current vote.
-        vote = ::PluginStore.get("poll", Poll.vote_key(post, current_user))
-        unless options.keys.include? vote
-          vote = nil
-        end
+        Poll.set_vote(post, current_user, params[:option])
 
-        options[vote] -= 1 if vote
-        options[params[:option]] += 1
-
-        ::PluginStore.set("poll", Poll.vote_key(post, current_user), params[:option])
-        ::PluginStore.set("poll", Poll.details_key(post), options)
-
-        render json: {options: options, selected: params[:option]}
+        render json: Poll.serialize(post, current_user)
       end
     end
   end
@@ -99,9 +59,7 @@ after_initialize do
   Discourse::Application.routes.append do
     mount ::Poll::Engine, at: '/poll'
   end
-end
 
-after_initialize do
   # Starting a topic title with "Poll:" will create a poll topic. If the title
   # starts with "poll:" but the first post doesn't contain a list of options in
   # it we need to raise an error.
@@ -123,7 +81,7 @@ after_initialize do
     after_save :save_poll_options_to_topic_metadata
     def save_poll_options_to_topic_metadata
       if Poll.is_poll_post?(self) and self.created_at >= 5.minute.ago
-        details = ::PluginStore.get("poll", Poll.details_key(self)) || {}
+        details = Poll.get_details(self) || {}
         new_options = Poll.get_poll_options(self)
         details.each do |key, value|
           unless new_options.include? key
@@ -133,7 +91,7 @@ after_initialize do
         new_options.each do |key|
           details[key] ||= 0
         end
-        ::PluginStore.set("poll", Poll.details_key(self), details)
+        Poll.set_details(self, details)
       end
     end
   end
@@ -142,9 +100,7 @@ after_initialize do
   PostSerializer.class_eval do
     attributes :poll_details
     def poll_details
-      vote = scope.user.nil? ? nil : ::PluginStore.get("poll", Poll.vote_key(object, scope.user))
-      options = ::PluginStore.get("poll", Poll.details_key(object))
-      {options: options, selected: vote}
+      Poll.serialize(object, scope.user)
     end
     def include_poll_details?
       Poll.is_poll_post?(object)
