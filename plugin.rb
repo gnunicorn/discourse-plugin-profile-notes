@@ -104,10 +104,10 @@ after_initialize do
   PostSerializer.class_eval do
     attributes :poll_details
     def poll_details
-      Poll.new(object).serialize(scope.user)
+      PollPlugin::Poll.new(object).serialize(scope.user)
     end
     def include_poll_details?
-      Poll.new(object).is_poll?
+      PollPlugin::Poll.new(object).is_poll?
     end
   end
 end
