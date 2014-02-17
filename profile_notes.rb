@@ -1,27 +1,8 @@
-module ::PollPlugin
+module ::ProfileNotesPlugin
 
-  class Poll
-    def initialize(post)
-      @post = post
-    end
-
-    def is_poll?
-      if !@post.post_number.nil? and @post.post_number > 1
-        # Not a new post, and also not the first post.
-        return false
-      end
-
-      topic = @post.topic
-
-      # Topic is not set in a couple of cases in the Discourse test suite.
-      return false if topic.nil?
-
-      if @post.post_number.nil? and topic.highest_post_number > 0
-        # New post, but not the first post in the topic.
-        return false
-      end
-
-      topic.title =~ /^poll:/i
+  class ProfileNote
+    def initialize(user)
+      @user = user
     end
 
     def options

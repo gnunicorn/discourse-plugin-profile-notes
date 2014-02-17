@@ -1,30 +1,24 @@
-<table>
-  <form>
-    {{#each view.options}}
-      <tr {{bind-attr class=checked:active}}>
-        <td class="radio"><input type="radio" name="poll" {{bind-attr checked=checked disabled=view.loading}} {{action selectOption option target="view"}}></td>
-        <td class="option">
-          <div class="option">
-            {{option}}
-          </div>
-          {{#if view.showResults}}
-            {{!-- TODO i18n and pluralization --}}
-            <div class="result">{{votes}} votes</div>
-          {{/if}}
-        </td>
-      </tr>
-    {{/each}}
-  </form>
-</table>
-
-<button {{action toggleShowResults target="view"}}>
-  {{#if view.showResults}}
-    Hide Results
+<section class="profileNotes">
+  {{#if view.showAddNote}}
+  <div>
+    <textarea name="note"></textarea>
+    <button class="btn">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
+  </div>
   {{else}}
-    Show Results
-  {{/if}}
-</button>
+    <button {{action showAddNote target="view"}} class="btn"><i class="fa fa-plus"></i>Add Note</button>
 
-{{#if view.loading}}
-  <i class="fa fa-spin fa-spinner"></i>
-{{/if}}
+  {{/if}}
+
+
+  {{#each view.notes}}
+    <p>{{this.note}}</p>
+    <p>{{this.author}}</p>
+    <p>{{this.timestamp}}
+  {{/each}}
+
+
+
+  {{#if view.loading}}
+    <i class="fa fa-spin fa-spinner"></i>
+  {{/if}}
+</section>

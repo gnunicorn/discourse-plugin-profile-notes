@@ -1,81 +1,40 @@
-var PollView = Ember.View.extend({
-  templateName: "poll",
-  classNames: ['poll-ui'],
+var ProfileNotesView = Ember.View.extend({
+  templateName: "profile_notes",
+  classNames: ['profile-notes-ui'],
   options: [],
   showResults: false,
 
-  updateOptionsFromJSON: function(json) {
-    if (json["selected"]) { this.set('showResults', true); }
-
-    array = [];
-    Object.keys(json["options"]).forEach(function(option) {
-      array.push(Ember.Object.create({
-        option: option,
-        votes: json["options"][option],
-        checked: (option == json["selected"])
-      }));
-    });
-    this.set('options', array);
-  },
-
-  replaceElement: function(target) {
+  insertElement: function() {
     this._insertElementLater(function() {
-      target.replaceWith(this.$());
+      var target = this._parentView.$("section.about");
+      this.$().insertAfter(target);
     });
   },
 
   actions: {
-    selectOption: function(option) {
-      if (!this.get('controller.currentUser.id')) {
-        this.get('controller').send('showLogin');
-        return;
-      }
-
-      this.get('options').forEach(function(opt) {
-        opt.set('checked', opt.get('option') == option);
-      });
-      this.rerender();
-
-      this.set('loading', true);
-      Discourse.ajax("/poll", {
-        type: "PUT",
-        data: {post_id: this.get('post.id'), option: option}
-      }).then(function(newJSON) {
-        this.set('showResults', true);
-        this.set('loading', false);
-        this.updateOptionsFromJSON(newJSON);
-        this.rerender();
-      }.bind(this));
+    showAddNote: function() {
+      this.set('showAddNote', true);
     },
-
-    toggleShowResults: function() {
-      this.set('showResults', !this.get('showResults'));
+    cancelAddNote: function() {
+      this.set('showAddNote', false);
     }
   }
 });
 
-Discourse.PostView.reopen({
-  createPollUI: function($post) {
-    var post = this.get('post');
+Discourse.UserView.reopen({
+  renderProfileNotes: function() {
+    if (this.get('profileNotesView')) return;
 
-    if (!post.get('topic.title').match(/^poll:/i) || post.get('post_number') > 1) {
-      return;
-    }
-
-    var poll_details = post.get('poll_details');
-    var view = this.createChildView(PollView, {
+    var view = this.createChildView(ProfileNotesView, {
       controller: this.get('controller'),
-      post: post
     });
-    view.updateOptionsFromJSON(poll_details);
-    view.replaceElement($post.find("ul:first"));
-    this.set('pollView', view);
+    view.insertElement();
+    this.set('profileNotesView', view);
+  }.observes('user.loaded', 'user.username'),
 
-  }.on('postViewInserted'),
-
-  clearPollView: function() {
-    if (this.get('pollView')) {
-      this.get('pollView').destroy();
+  clearProfileNotesView: function() {
+    if (this.get('profileNotesView')) {
+      this.get('profileNotesView').destroy();
     }
   }.on('willClearRender')
 });
