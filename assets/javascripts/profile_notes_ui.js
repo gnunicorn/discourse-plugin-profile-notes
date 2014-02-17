@@ -60,7 +60,7 @@ Discourse.UserView.reopen({
     });
     view.insertElement();
     this.set('profileNotesView', view);
-  }.observes('user.loaded', 'user.id'),
+  }.on('didInsertElement'),
 
   clearProfileNotesView: function() {
     if (this.get('profileNotesView')) {
