@@ -1,6 +1,6 @@
 var ProfileNotesView = Ember.View.extend({
   templateName: "profile_notes",
-  // element: "section",
+  tagName: "section",
   classNames: ['profile-notes-ui'],
   noteDraft: "",
 
