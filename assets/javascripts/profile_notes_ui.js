@@ -53,7 +53,7 @@ var ProfileNotesView = Ember.View.extend({
 });
 
 Discourse.UserView.reopen({
-  renderProfileNotes: function(user_id) {
+  renderProfileNotes: function() {
     if (this.get('profileNotesView')) return;
 
     var view = this.createChildView(ProfileNotesView, {
@@ -64,6 +64,16 @@ Discourse.UserView.reopen({
     view.insertElement();
     this.set('profileNotesView', view);
   }.on('didInsertElement'),
+
+  updateProfileNotes: function(){
+    if (!this.get('profileNotesView')) return;
+
+    var view = this.get('profileNotesView');
+    view.set("user_id", this.get("user.id"));
+    view.set("notes", "");
+    view.loadNotes();
+
+  }.observes('user.loaded', 'user.id'),
 
   clearProfileNotesView: function() {
     if (this.get('profileNotesView')) {
