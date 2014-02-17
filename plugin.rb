@@ -34,7 +34,7 @@ after_initialize do
 
         target = User.find(params[:target_id])
         notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
-        render json: notes.get_notes()
+        render json: notes.get_all_notes()
       end
 
       def add
@@ -50,8 +50,13 @@ after_initialize do
 
         target = User.find(params[:target_id])
         notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
-        notes.add_note(params[:text])
-        render json: notes.get_notes()
+        if current_user.staff? and !params[:for_staff].nil?
+          puts "FOR STAFF"
+          notes.add_note(params[:text], true)
+        else 
+          notes.add_note(params[:text], false)
+        end
+        render json: notes.get_all_notes()
       end
     end
   end
@@ -73,5 +78,13 @@ register_asset "javascripts/profile_notes_ui.js"
 
 register_css <<CSS
 
+.profile-notes-ui {
+  padding: 12px;
+  border: 1px #CCC solid;
+}
+
+.profile-notes-ui .note {
+  border: 1px #CCC solid;
+}
 
 CSS

@@ -17,6 +17,7 @@ var ProfileNotesView = Ember.View.extend({
     Discourse.ajax("/profile_notes/load", {
       data: {target_id: this.get('user_id')}
     }).then(function(newJSON) {
+      console.log(newJSON.notes);
       this.set('loading', false);
       this.set("notes", newJSON.notes);
       this.rerender();
@@ -36,7 +37,8 @@ var ProfileNotesView = Ember.View.extend({
       this.set('showAddNote', false);
       Discourse.ajax("/profile_notes/add", {
         type: "POST",
-        data: {target_id: this.get('user_id'), text: noteText}
+        data: {target_id: this.get('user_id'),
+               text: noteText, for_staff: this.$(".share-with-staff").val()}
       }).then(function(newJSON) {
         this.set('loading', false);
         this.set("notes", newJSON.notes);
@@ -56,7 +58,8 @@ Discourse.UserView.reopen({
 
     var view = this.createChildView(ProfileNotesView, {
       controller: this.get('controller'),
-      user_id: this.get("user.id")
+      user_id: this.get("user.id"),
+      is_staff: Discourse.User.current().staff
     });
     view.insertElement();
     this.set('profileNotesView', view);

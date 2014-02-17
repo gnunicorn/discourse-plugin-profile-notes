@@ -1,25 +1,35 @@
 
-  {{#if view.showAddNote}}
+{{#if view.showAddNote}}
+<div>
+  <textarea></textarea>
   <div>
-    <textarea></textarea>
+    {{#if view.is_staff}}
+      <input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input><br />
+    {{/if}}
     <button {{action addNote target="view"}} class="btn">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
   </div>
+</div>
+{{else}}
+  <button {{action showAddNote target="view"}} class="btn"><i class="fa fa-plus"></i>Add Note</button>
+
+{{/if}}
+
+
+{{#if view.loading}}
+  <i class="fa fa-spin fa-spinner"></i>
+{{/if}}
+
+
+{{#each view.notes}}
+  {{#if this.staff}}
+    <div class="note staff">
+    <span class="timestamp">{{this.timestamp}}</span> <span>shared with staff by</span> <span class="user"><a href="/users/{{unbound this.user.username}}">{{this.user.name}}</a> </span>
+    <p>{{this.text}}</p>
   {{else}}
-    <button {{action showAddNote target="view"}} class="btn"><i class="fa fa-plus"></i>Add Note</button>
-
-  {{/if}}
-
-
-  {{#each view.notes}}
     <div class="note">
-      <span class="timestamp">{{this.timestamp}}</span>
-      <p>{{this.text}}</p>
-    </div>
-  {{/each}}
-
-
-
-  {{#if view.loading}}
-    <i class="fa fa-spin fa-spinner"></i>
+    <span class="timestamp">{{this.timestamp}}</span> <span class="private">(for your eyes only)</span>
+    <p>{{this.text}}</p>
   {{/if}}
+  </div>
+{{/each}}
 
