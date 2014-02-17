@@ -18,16 +18,47 @@ after_initialize do
       isolate_namespace ProfileNotesPlugin
     end
 
-    class ProfileNoteController < ActionController::Base
+    class ProfileNotesController < ActionController::Base
       include CurrentUser
 
-      def addNote
+      def loadNotes
+        if current_user.nil?
+          render status: :forbidden, json: false
+          return
+        end
+
+        if params[:target_id].nil?
+          render status: 400, json: false
+          return
+        end
+
+        target = User.find(params[:target_id])
+        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
+        render json: notes.get_notes()
+      end
+
+      def add
+        if current_user.nil?
+          render status: :forbidden, json: false
+          return
+        end
+
+        if params[:target_id].nil? or params[:text].nil?
+          render status: 400, json: false
+          return
+        end
+
+        target = User.find(params[:target_id])
+        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
+        notes.add_note(params[:text])
+        render json: notes.get_notes()
       end
     end
   end
 
   ProfileNotesPlugin::Engine.routes.draw do
-    put '/' => 'profile_notes#add'
+    get '/load' => 'profile_notes#loadNotes'
+    post '/add' => 'profile_notes#add'
   end
 
   Discourse::Application.routes.append do

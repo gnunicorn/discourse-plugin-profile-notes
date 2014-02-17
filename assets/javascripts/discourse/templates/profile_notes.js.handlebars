@@ -1,8 +1,8 @@
 <section class="profileNotes">
   {{#if view.showAddNote}}
   <div>
-    <textarea name="note"></textarea>
-    <button class="btn">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
+    <textarea></textarea>
+    <button {{action addNote target="view"}} class="btn">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
   </div>
   {{else}}
     <button {{action showAddNote target="view"}} class="btn"><i class="fa fa-plus"></i>Add Note</button>
@@ -11,9 +11,10 @@
 
 
   {{#each view.notes}}
-    <p>{{this.note}}</p>
-    <p>{{this.author}}</p>
-    <p>{{this.timestamp}}
+    <div class="note">
+      <span class="timestamp">{{this.timestamp}}</span>
+      <p>{{this.text}}</p>
+    </div>
   {{/each}}
 
 
