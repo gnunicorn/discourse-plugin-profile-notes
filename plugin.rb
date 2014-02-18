@@ -76,14 +76,50 @@ register_asset "javascripts/discourse/templates/profile_notes.js.handlebars"
 register_asset "javascripts/profile_notes_ui.js"
 
 register_css <<CSS
-
 .profile-notes-ui {
   padding: 12px;
   border: 1px #CCC solid;
+  color: #666;
+}
+
+.profile-notes-ui:after {
+  content: " ";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 
 .profile-notes-ui .note {
   border: 1px #CCC solid;
+  margin: 5px 0;
+  padding: 2px 10px;
+  clear: both;
+}
+
+.profile-notes-ui .show-note {
+    float: right;
+    margin-bottom: 15px;
+}
+
+.profile-notes-ui .controls {
+    display: block;
+    margin-left: 5%;
+    margin-bottom: 20px;
+}
+
+.profile-notes-ui textarea {
+    width: 90%;
+    margin-left: 5%;
+    height: 70px;
+}
+
+
+.profile-notes-ui .note .timestamp,
+.profile-notes-ui .note .shared,
+.profile-notes-ui .note .private {
+  font-size: 0.8em;
+  color: #B3B3B3;
 }
 
 CSS

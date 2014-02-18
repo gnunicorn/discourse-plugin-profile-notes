@@ -1,16 +1,19 @@
 
+<h3><i class="fa fa-pencil-square-o"></i> Private Notes</h3>
+<p class="info">Notes added here are for your eyes only. No one else (including the profile you are looking at) can read them.</p>
+
 {{#if view.showAddNote}}
 <div>
   <textarea></textarea>
-  <div>
+  <div class="controls">
     {{#if view.is_staff}}
-      <input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input><br />
+      <label><input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input></label>
     {{/if}}
-    <button {{action addNote target="view"}} class="btn">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
+    <button {{action addNote target="view"}} class="btn btn-primary">Add Note</button> <a {{action cancelAddNote target="view"}}>cancel</a>
   </div>
 </div>
 {{else}}
-  <button {{action showAddNote target="view"}} class="btn"><i class="fa fa-plus"></i>Add Note</button>
+  <button {{action showAddNote target="view"}} class="btn show-note"><i class="fa fa-plus"></i>Add Note</button>
 
 {{/if}}
 
@@ -23,12 +26,13 @@
 {{#each view.notes}}
   {{#if this.staff}}
     <div class="note staff">
-    <span class="timestamp">{{this.timestamp}}</span> <span>shared with staff by</span> <span class="user"><a href="/users/{{unbound this.user.username}}">{{this.user.name}}</a> </span>
-    <p>{{this.text}}</p>
+      
+      <p><span class="user"><a href="/users/{{unbound this.user.username}}">{{this.user.name}}</a> </span> {{this.text}}</p>
+      <span class="timestamp">{{date this.timestamp}}</span> <span class="shared">shared with all staff</span>
   {{else}}
     <div class="note">
-    <span class="timestamp">{{this.timestamp}}</span> <span class="private">(for your eyes only)</span>
-    <p>{{this.text}}</p>
+      <p>{{this.text}}</p>
+      <span class="timestamp">{{date this.timestamp}}</span> <span class="private">for your eyes only</span>
   {{/if}}
   </div>
 {{/each}}
