@@ -19,11 +19,19 @@ Just two easy steps. From your main discourse do:
 
 Then restart your discourse and enjoy the fun on ever /user/*/activity-page.
 
+## Changelog:
+
+ * 2014-02-18
+   - way improved UI. If you had a version before this one run in development, make sure to clear your cache (rm -rf DISCOURSE/tmp/cache/*)
+   - Bugfix: as staff all notes were shared with staff. Now only when actually selected.
+
+ * 2014-02-17
+   - initial version
+
 ## TODO:
 
 (in order of importance)
 
- * The design needs seriously more work.
  * Notes can't be deleted atm
  * Notes should support markdown, too
 
