@@ -12,17 +12,16 @@ On top, Staff can decide to share the note with the rest of staff. In which case
 
 Just two easy steps. From your main discourse do:
 
-  cd plugins
-  git clone https://github.com/ligthyear/discourse-plugin-profile-notes.git   # clone the repo here
-  cd ..
-  RAILS_ENV=production rake assets:precompile 
+    cd plugins
+    git clone https://github.com/ligthyear/discourse-plugin-profile-notes.git   # clone the repo here
+    cd ..
+    RAILS_ENV=production rake assets:precompile 
 
- Then restart your discourse and enjoy the fun on ever /user/*/activity-page
+Then restart your discourse and enjoy the fun on ever /user/*/activity-page.
 
 ## TODO:
 
 (in order of importance)
-
 
  * The design needs seriously more work.
  * Notes can't be deleted atm
@@ -31,7 +30,7 @@ Just two easy steps. From your main discourse do:
 ## Authors:
 Benjamin Kampmann <me @ create-build-execute . com>
 
-## License:
+## License (BSD):
 Copyright (c) 2014, Benjamin Kampmann
 All rights reserved.
 
