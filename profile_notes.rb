@@ -41,7 +41,6 @@ module ::ProfileNotesPlugin
       end
       # we want sort to inverted
       sorted = notes.sort {|a, b| b[:timestamp] <=> a[:timestamp] }
-      puts sorted
       return {notes: sorted}
     end
 
