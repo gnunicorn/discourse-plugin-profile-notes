@@ -38,7 +38,7 @@ var ProfileNotesView = Ember.View.extend({
       Discourse.ajax("/profile_notes/add", {
         type: "POST",
         data: {target_id: this.get('user_id'),
-               text: noteText, for_staff: this.$(".share-with-staff").val()}
+               text: noteText, for_staff: this.$(".share-with-staff:checked").length}
       }).then(function(newJSON) {
         this.set('loading', false);
         this.set("notes", newJSON.notes);

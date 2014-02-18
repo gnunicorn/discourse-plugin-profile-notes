@@ -51,7 +51,7 @@ after_initialize do
         target = User.find(params[:target_id])
         notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
         if current_user.staff? and !params[:for_staff].nil?
-          notes.add_note(params[:text], true)
+          notes.add_note(params[:text], params[:for_staff] == "1")
         else 
           notes.add_note(params[:text], false)
         end
