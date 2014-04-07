@@ -1,0 +1,44 @@
+.profile-notes-ui {
+  padding: 12px;
+  border: 1px #CCC solid;
+  color: #666;
+  &:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+
+  .note {
+    border: 1px #CCC solid;
+    margin: 5px 0;
+    padding: 2px 10px;
+    clear: both;
+  }
+
+  .show-note {
+    float: right;
+    margin-bottom: 15px;
+  }
+
+  .controls {
+    display: block;
+    margin-left: 5%;
+    margin-bottom: 20px;
+  }
+
+  textarea {
+    width: 90%;
+    margin-left: 5%;
+    height: 70px;
+  }
+
+
+  .note .timestamp,
+  .note .shared,
+  .note .private {
+    font-size: 0.8em;
+    color: #B3B3B3;
+  }
+}
