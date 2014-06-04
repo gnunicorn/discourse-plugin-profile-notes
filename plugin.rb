@@ -52,10 +52,28 @@ after_initialize do
         notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
         if current_user.staff? and !params[:for_staff].nil?
           notes.add_note(params[:text], params[:for_staff] == "1")
-        else 
+        else
           notes.add_note(params[:text], false)
         end
         render json: notes.get_all_notes()
+      end
+
+      def edit
+        if current_user.nil?
+          render status: :forbidden, json: current_user
+          return
+        end
+
+        if params[:note_index].nil?
+          render status: :forbidden, json: params
+          return
+        end
+
+        target = User.find(params[:target_id])
+        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
+
+        notes.edit_note(params[:text], params[:note_index])
+        render json: notes.get_all_notes
       end
     end
   end
@@ -63,6 +81,7 @@ after_initialize do
   ProfileNotesPlugin::Engine.routes.draw do
     get '/load' => 'profile_notes#loadNotes'
     post '/add' => 'profile_notes#add'
+    post '/edit' => 'profile_notes#edit'
   end
 
   Discourse::Application.routes.append do

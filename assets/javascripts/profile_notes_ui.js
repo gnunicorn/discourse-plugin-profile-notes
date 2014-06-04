@@ -48,6 +48,30 @@ var ProfileNotesView = Ember.View.extend({
     },
     cancelAddNote: function() {
       this.set('showAddNote', false);
+    },
+
+    showEditNote: function(note) {
+      this.set('note', note);
+      this.set('showEditNote', true);
+    },
+    editNote: function() {
+      var noteText = $.trim(this.$("textarea").val());
+
+      this.set('loading', true);
+      this.set('showEditNote', false);
+      Discourse.ajax("/profile_notes/edit", {
+        type: "POST",
+        data: {note_index: this.get('note').note_index,
+                target_id: this.get('user_id'),
+                text: noteText }
+      }).then(function(newJSON) {
+        this.set('loading', false);
+        this.set("notes", newJSON.notes);
+        this.rerender();
+      }.bind(this));
+    },
+    cancelEditNote: function() {
+      this.set('showEditNote', false);
     }
   }
 });

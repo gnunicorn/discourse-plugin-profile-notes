@@ -17,16 +17,22 @@
 
 {{/if}}
 
-
 {{#if view.loading}}
   <i class="fa fa-spin fa-spinner"></i>
 {{/if}}
 
+{{#if view.showEditNote}}
+<div>
+  {{textarea value=view.note.text}}
+  <div class="controls">
+    <button {{action editNote target="view"}} class="btn btn-primary">Edit Note</button> <a {{action cancelEditNote target="view"}}>cancel</a>
+  </div>
+</div>
+{{/if}}
 
 {{#each view.notes}}
   {{#if this.staff}}
     <div class="note staff">
-      
       <p><span class="user"><a href="/users/{{unbound this.user.username}}">{{this.user.name}}</a> </span> {{this.text}}</p>
       <span class="timestamp">{{date this.timestamp}}</span> <span class="shared">shared with all staff</span>
   {{else}}
@@ -34,6 +40,7 @@
       <p>{{this.text}}</p>
       <span class="timestamp">{{date this.timestamp}}</span> <span class="private">for your eyes only</span>
   {{/if}}
+    <button {{action showEditNote this target="view"}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
   </div>
 {{/each}}
 
