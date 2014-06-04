@@ -7,13 +7,21 @@ module ::ProfileNotesPlugin
     end
 
     def get_notes(for_staff)
-      key = for_staff ? staff_key() : notes_key()
+      case for_staff
+      when true
+        key = staff_key
+        idx_key = "staff"
+      when false
+        key = notes_key
+        idx_key = "user"
+      end
+
       notes = ::PluginStore.get("profile_notes", key)
 
       return {notes: []} if notes.nil?
 
       notes[:notes].each_with_index do |note, idx|
-        note[:note_index] = "user-#{idx}"
+        note[:note_index] = "#{idx_key}-#{idx}"
       end
 
       notes
@@ -33,11 +41,10 @@ module ::ProfileNotesPlugin
 
     def edit_note(text, note_index)
       for_staff = note_index.starts_with?('staff-')
-      index = note_index.match(/\-(\d+)$/)[1].to_i
       notes = get_notes(for_staff)
 
-      notes[:notes].each_with_index do |note, idx|
-        if idx == index
+      notes[:notes].each do |note|
+        if note[:note_index] == note_index
           note[:text] = text
           note[:timestamp] = Time.now.getutc
         end
@@ -47,7 +54,18 @@ module ::ProfileNotesPlugin
       ::PluginStore.set("profile_notes", key, notes)
     end
 
-    def get_all_notes()
+    def delete_note note_index
+      for_staff = note_index.starts_with?('staff-')
+      notes = get_notes(for_staff)
+
+      notes[:notes] = notes[:notes].reject {|note| note[:note_index] == note_index }
+
+      key = for_staff ? staff_key : notes_key
+      ::PluginStore.set("profile_notes", key, notes)
+    end
+
+
+    def get_all_notes
       notes = get_notes(false)[:notes]
 
       if @user.staff?

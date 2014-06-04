@@ -41,6 +41,7 @@
       <span class="timestamp">{{date this.timestamp}}</span> <span class="private">for your eyes only</span>
   {{/if}}
     <button {{action showEditNote this target="view"}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
+    <button {{action deleteNote this target="view"}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
   </div>
 {{/each}}
 

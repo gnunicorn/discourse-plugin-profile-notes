@@ -20,36 +20,24 @@ after_initialize do
 
     class ProfileNotesController < ActionController::Base
       include CurrentUser
+      before_filter :ensure_current_user
+      before_filter :has_note_index, only: [:edit, :delete]
 
       def loadNotes
-        if current_user.nil?
-          render status: :forbidden, json: false
-          return
-        end
-
         if params[:target_id].nil?
           render status: 400, json: false
           return
         end
 
-        target = User.find(params[:target_id])
-        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
         render json: notes.get_all_notes()
       end
 
       def add
-        if current_user.nil?
-          render status: :forbidden, json: false
-          return
-        end
-
         if params[:target_id].nil? or params[:text].nil?
           render status: 400, json: false
           return
         end
 
-        target = User.find(params[:target_id])
-        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
         if current_user.staff? and !params[:for_staff].nil?
           notes.add_note(params[:text], params[:for_staff] == "1")
         else
@@ -59,21 +47,35 @@ after_initialize do
       end
 
       def edit
-        if current_user.nil?
-          render status: :forbidden, json: false
-          return
-        end
-
-        if params[:note_index].nil?
-          render status: :forbidden, json: false
-          return
-        end
-
-        target = User.find(params[:target_id])
-        notes = ProfileNotesPlugin::ProfileNotes.new(target, current_user)
-
         notes.edit_note(params[:text], params[:note_index])
         render json: notes.get_all_notes
+      end
+
+      def delete
+        notes.delete_note(params[:note_index])
+        render json: notes.get_all_notes
+      end
+
+      private
+
+      def render_forbidden
+        render status: :forbidden, json: false
+      end
+
+      def ensure_current_user
+        render_forbidden if current_user.nil?
+      end
+
+      def has_note_index
+        render_forbidden if params[:note_index].nil?
+      end
+
+      def target
+        @_target ||= User.find(params[:target_id])
+      end
+
+      def notes
+        @_notes ||= ProfileNotesPlugin::ProfileNotes.new(target, current_user)
       end
     end
   end
@@ -82,6 +84,7 @@ after_initialize do
     get '/load' => 'profile_notes#loadNotes'
     post '/add' => 'profile_notes#add'
     post '/edit' => 'profile_notes#edit'
+    delete '/delete' => 'profile_notes#delete'
   end
 
   Discourse::Application.routes.append do

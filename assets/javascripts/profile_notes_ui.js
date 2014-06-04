@@ -72,6 +72,16 @@ var ProfileNotesView = Ember.View.extend({
     },
     cancelEditNote: function() {
       this.set('showEditNote', false);
+    },
+    deleteNote: function(note) {
+      Discourse.ajax("/profile_notes/delete", {
+        type: "DELETE",
+        data: {note_index: note.note_index,
+                target_id: this.get('user_id')}
+      }).then(function(newJSON) {
+        this.set("notes", newJSON.notes);
+        this.rerender();
+      }.bind(this));
     }
   }
 });
