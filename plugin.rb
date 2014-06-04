@@ -60,12 +60,12 @@ after_initialize do
 
       def edit
         if current_user.nil?
-          render status: :forbidden, json: current_user
+          render status: :forbidden, json: false
           return
         end
 
         if params[:note_index].nil?
-          render status: :forbidden, json: params
+          render status: :forbidden, json: false
           return
         end
 
