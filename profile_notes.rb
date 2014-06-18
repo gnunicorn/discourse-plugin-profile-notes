@@ -27,19 +27,19 @@ module ::ProfileNotesPlugin
       notes
     end
 
-    def add_note(text, for_staff)
+    def add_note(text, for_staff, extra = {})
       notes = get_notes(for_staff)
       notes[:notes] << {
         timestamp: Time.now.getutc,
         text: text,
         by: @user.id
-      }
+      }.merge!(extra)
 
       key = for_staff ? staff_key : notes_key
       ::PluginStore.set("profile_notes", key, notes)
     end
 
-    def edit_note(text, note_index)
+    def edit_note(text, note_index, extra = {})
       for_staff = note_index.starts_with?('staff-')
       notes = get_notes(for_staff)
 
@@ -47,6 +47,7 @@ module ::ProfileNotesPlugin
         if note[:note_index] == note_index
           note[:text] = text
           note[:timestamp] = Time.now.getutc
+          note.merge!(extra)
         end
       end
 
