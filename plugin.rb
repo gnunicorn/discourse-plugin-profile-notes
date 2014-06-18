@@ -29,7 +29,7 @@ after_initialize do
           return
         end
 
-        render json: notes.get_all_notes()
+        render json: notes.get_all_notes
       end
 
       def add
@@ -43,7 +43,7 @@ after_initialize do
         else
           notes.add_note(params[:text], false)
         end
-        render json: notes.get_all_notes()
+        render json: notes.get_all_notes
       end
 
       def edit

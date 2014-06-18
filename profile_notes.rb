@@ -35,7 +35,7 @@ module ::ProfileNotesPlugin
         by: @user.id
       }
 
-      key = for_staff ? staff_key() : notes_key()
+      key = for_staff ? staff_key : notes_key
       ::PluginStore.set("profile_notes", key, notes)
     end
 
