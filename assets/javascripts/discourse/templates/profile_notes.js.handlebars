@@ -40,6 +40,11 @@
       <p>{{this.text}}</p>
       <span class="timestamp">{{date this.timestamp}}</span> <span class="private">for your eyes only</span>
   {{/if}}
+  {{#if this.topic}}
+    <span class="topic-link">
+      created from <a href="/t/{{unbound this.topic.slug}}/{{unbound this.topic.id}}">{{this.topic.title}}</a>
+    </span>
+  {{/if}}
     <button {{action showEditNote this target="view"}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
     <button {{action deleteNote this target="view"}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
   </div>

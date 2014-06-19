@@ -22,6 +22,14 @@ module ::ProfileNotesPlugin
 
       notes[:notes].each_with_index do |note, idx|
         note[:note_index] = "#{idx_key}-#{idx}"
+        if note[:topic_id]
+          topic = Topic.find(note[:topic_id])
+          note[:topic] = {
+            id: topic.id,
+            slug: topic.slug,
+            title: topic.title
+          }
+        end
       end
 
       notes
