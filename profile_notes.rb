@@ -80,13 +80,9 @@ module ::ProfileNotesPlugin
       if @user.staff?
         get_notes(true)[:notes].each_with_index do |note, idx|
           user = User.find(note[:by])
-          notes << {
-              timestamp: note[:timestamp],
-              text: note[:text],
-              staff: true,
-              user: {username: user.username, id: user.id, name: user.name},
-              note_index: "staff-#{idx}"
-          }
+          note[:staff] = true
+          note[:user] = {username: user.username, id: user.id, name: user.name}
+          notes << note
         end
       end
       # we want sort to inverted
