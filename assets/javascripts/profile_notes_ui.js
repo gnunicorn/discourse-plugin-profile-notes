@@ -17,7 +17,6 @@ var ProfileNotesView = Ember.View.extend({
     Discourse.ajax("/profile_notes/load", {
       data: {target_id: this.get('user_id')}
     }).then(function(newJSON) {
-      console.log(newJSON.notes);
       this.set('loading', false);
       this.set("notes", newJSON.notes);
       this.rerender();
