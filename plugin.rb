@@ -73,6 +73,6 @@ end
 
 # ProfileNote UI.
 register_asset "javascripts/discourse/templates/profile_notes.js.handlebars"
-register_asset "javascripts/profile_notes_ui.js"
+register_asset "javascripts/discourse/initializers/profile_notes_ui.js.es6"
 register_asset "profile_notes.scss"
 

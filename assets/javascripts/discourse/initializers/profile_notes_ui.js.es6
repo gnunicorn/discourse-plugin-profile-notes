@@ -6,7 +6,9 @@ var ProfileNotesView = Ember.View.extend({
 
   insertElement: function() {
     this._insertElementLater(function() {
-      var target = this._parentView.$("section.about");
+      var target = this._parentView.$("section.about").first();
+      if (target.length === 0) target = this._parentView.$("section.details").first();
+      console.log(target);
       this.$().insertAfter(target);
       this.loadNotes();
     }.bind(this));
@@ -51,8 +53,9 @@ var ProfileNotesView = Ember.View.extend({
   }
 });
 
-Discourse.UserView.reopen({
+var injector = {
   renderProfileNotes: function() {
+    console.log("rendering!", this);
     if (this.get('profileNotesView')) return;
 
     var view = this.createChildView(ProfileNotesView, {
@@ -79,4 +82,33 @@ Discourse.UserView.reopen({
       this.get('profileNotesView').destroy();
     }
   }.on('willClearRender')
-});
+};
+
+
+export default {
+  name: "inject-profiles-notes",
+
+  initialize: function(container, application) {
+    if (Discourse.SiteSettings.show_profile_notes_on_profile){
+      var UserView  = container.lookupFactory('view:user');
+      UserView.reopen(injector);
+      console.log("done user view")
+    }
+
+    var AdminUserIndexView  = container.lookupFactory('view:admin-user-index');
+    if (AdminUserIndexView){
+      AdminUserIndexView.reopen(injector);
+      console.log("injected AUI");
+    } else if (container.lookupFactory('view:admin-user')){
+      // no view but we have admin. let's create a view and inject
+      console.log("Fallback: creating our own");
+      var aui_view = Discourse.View.extend(injector, {
+        didInsertElement: function () {
+          console.log(arguments);
+        }
+      });
+      container.register("view:admin-user-index", aui_view);
+      Discourse.AdminUserIndexView = aui_view;
+    }
+  }
+}
