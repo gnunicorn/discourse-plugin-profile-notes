@@ -8,7 +8,6 @@ var ProfileNotesView = Ember.View.extend({
     this._insertElementLater(function() {
       var target = this._parentView.$("section.about").first();
       if (target.length === 0) target = this._parentView.$("section.details").first();
-      console.log(target);
       this.$().insertAfter(target);
       this.loadNotes();
     }.bind(this));
@@ -92,21 +91,15 @@ export default {
     if (Discourse.SiteSettings.show_profile_notes_on_profile){
       var UserView  = container.lookupFactory('view:user');
       UserView.reopen(injector);
-      console.log("done user view")
     }
 
     var AdminUserIndexView  = container.lookupFactory('view:admin-user-index');
     if (AdminUserIndexView){
       AdminUserIndexView.reopen(injector);
-      console.log("injected AUI");
     } else if (container.lookupFactory('view:admin-user')){
       // no view but we have admin. let's create a view and inject
       console.log("Fallback: creating our own");
-      var aui_view = Discourse.View.extend(injector, {
-        didInsertElement: function () {
-          console.log(arguments);
-        }
-      });
+      var aui_view = Discourse.View.extend(injector);
       container.register("view:admin-user-index", aui_view);
       Discourse.AdminUserIndexView = aui_view;
     }
