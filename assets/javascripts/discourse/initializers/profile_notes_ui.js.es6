@@ -59,7 +59,7 @@ var injector = {
 
     var view = this.createChildView(ProfileNotesView, {
       controller: this.get('controller'),
-      user_id: this.get("user.id"),
+      user_id: this.get("user.id") || this.get('controller.content.id'),
       is_staff: Discourse.User.current().staff
     });
     view.insertElement();
@@ -67,14 +67,15 @@ var injector = {
   }.on('didInsertElement'),
 
   updateProfileNotes: function(){
+    console.log("ping!");
     if (!this.get('profileNotesView')) return;
 
     var view = this.get('profileNotesView');
-    view.set("user_id", this.get("user.id"));
+    view.set("user_id", this.get("user.id")  || this.get('controller.content.id'));
     view.set("notes", "");
     view.loadNotes();
 
-  }.observes('user.loaded', 'user.id'),
+  }.observes('user.loaded', 'user.id', 'controller.content.id'),
 
   clearProfileNotesView: function() {
     if (this.get('profileNotesView')) {
