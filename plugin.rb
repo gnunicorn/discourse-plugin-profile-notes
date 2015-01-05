@@ -94,7 +94,5 @@ after_initialize do
 end
 
 # ProfileNote UI.
-register_asset "javascripts/discourse/templates/profile_notes.js.handlebars"
-register_asset "javascripts/profile_notes_ui.js"
 register_asset "profile_notes.scss"
 
