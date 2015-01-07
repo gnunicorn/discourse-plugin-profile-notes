@@ -1,3 +1,5 @@
+require 'redcarpet'
+
 module ::ProfileNotesPlugin
 
   class ProfileNotes
@@ -20,8 +22,11 @@ module ::ProfileNotesPlugin
 
       return {notes: []} if notes.nil?
 
+      markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+
       notes[:notes].each_with_index do |note, idx|
         note[:note_index] = "#{idx_key}-#{idx}"
+        note[:formatted_text] = markdown.render(note[:text])
         if note[:topic_id]
           topic = Topic.find(note[:topic_id])
           note[:topic] = {
