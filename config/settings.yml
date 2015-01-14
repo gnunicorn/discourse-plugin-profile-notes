@@ -1,0 +1,4 @@
+uncategorized:
+  show_profile_notes_on_profile:
+     default: true
+     client: true
