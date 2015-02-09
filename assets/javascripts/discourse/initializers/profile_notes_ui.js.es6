@@ -5,10 +5,10 @@ var ProfileNotesView = Ember.View.extend({
   noteDraft: "",
 
   insertElement: function() {
-    this._insertElementLater(function() {
+    Em.run.next('afterRender', function() {
       var target = this._parentView.$("section.about").first();
       if (target.length === 0) target = this._parentView.$("section.details").first();
-      this.$().insertAfter(target);
+      this.constructor.renderer.appendTo(this, target[0]);
       this.loadNotes();
     }.bind(this));
   },
