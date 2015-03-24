@@ -80,7 +80,7 @@ export default {
   name: "inject-profiles-notes",
 
   initialize: function(container, application) {
-    if (Discourse.SiteSettings.show_profile_notes_on_profile){
+    if (Discourse.User.current() !== null && Discourse.SiteSettings.show_profile_notes_on_profile){
       UserController.reopen(injector);
     }
 

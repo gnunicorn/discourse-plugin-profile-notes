@@ -1,53 +1,55 @@
-<div class="profile-notes-ui">
-  <h3><i class="fa fa-pencil-square-o"></i> Private Notes</h3>
-  <p class="info">Notes added here are for your eyes only. No one else (including the profile you are looking at) can read them.</p>
+{{#if currentUser}}
+  <div class="profile-notes-ui">
+    <h3><i class="fa fa-pencil-square-o"></i> Private Notes</h3>
+    <p class="info">Notes added here are for your eyes only. No one else (including the profile you are looking at) can read them.</p>
 
-  {{#if showAddNote}}
-  <div>
-    <textarea></textarea>
-    <div class="controls">
-      {{#if is_staff}}
-        <label><input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input></label>
-      {{/if}}
-      <button {{action addNote}} class="btn btn-primary">Add Note</button> <a {{action cancelAddNote}}>cancel</a>
+    {{#if showAddNote}}
+    <div>
+      <textarea></textarea>
+      <div class="controls">
+        {{#if is_staff}}
+          <label><input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input></label>
+        {{/if}}
+        <button {{action "addNote"}} class="btn btn-primary">Add Note</button> <a {{action "cancelAddNote"}}>cancel</a>
+      </div>
     </div>
-  </div>
-  {{else}}
-    <button {{action 'showAddNote'}} class="btn show-note"><i class="fa fa-plus"></i>Add Note</button>
-
-  {{/if}}
-
-  {{#if loading}}
-    <i class="fa fa-spin fa-spinner"></i>
-  {{/if}}
-
-  {{#if showEditNote}}
-  <div>
-    {{textarea value=note.text}}
-    <div class="controls">
-      <button {{action editNote}} class="btn btn-primary">Edit Note</button> <a {{action cancelEditNote}}>cancel</a>
-    </div>
-  </div>
-  {{/if}}
-
-  {{#each notes}}
-    {{#if this.staff}}
-      <div class="note staff">
-        <p><span class="user"><a href="/users/{{unbound this.user.username}}">{{this.user.name}}</a> </span> </p>
-        {{{this.formatted_text}}}
-        <span class="timestamp">{{date this.timestamp}}</span> <span class="shared">shared with all staff</span>
     {{else}}
-      <div class="note">
-        {{{this.formatted_text}}}
-        <p><span class="timestamp">{{date this.timestamp}}</span> <span class="private">for your eyes only</span></p>
+      <button {{action 'showAddNote'}} class="btn show-note"><i class="fa fa-plus"></i>Add Note</button>
+
     {{/if}}
-    {{#if this.topic}}
-      <span class="topic-link">
-        created from <a href="/t/{{unbound this.topic.slug}}/{{unbound this.topic.id}}">{{this.topic.title}}</a>
-      </span>
+
+    {{#if loading}}
+      <i class="fa fa-spin fa-spinner"></i>
     {{/if}}
-      <button {{action showEditNote this}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
-      <button {{action deleteNote this}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+
+    {{#if showEditNote}}
+    <div>
+      {{textarea value=note.text}}
+      <div class="controls">
+        <button {{action "editNote"}} class="btn btn-primary">Edit Note</button> <a {{action "cancelEditNote"}}>cancel</a>
+      </div>
     </div>
-  {{/each}}
-</div>
+    {{/if}}
+
+    {{#each note in notes}}
+      {{#if note.staff}}
+        <div class="note staff">
+          <p><span class="user"><a href="/users/{{unbound note.user.username}}">{{note.user.name}}</a> </span> </p>
+          {{{note.formatted_text}}}
+          <span class="timestamp">{{format-date note.timestamp}}</span> <span class="shared">shared with all staff</span>
+      {{else}}
+        <div class="note">
+          {{{note.formatted_text}}}
+          <p><span class="timestamp">{{format-date note.timestamp}}</span> <span class="private">for your eyes only</span></p>
+      {{/if}}
+      {{#if note.topic}}
+        <span class="topic-link">
+          created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
+        </span>
+      {{/if}}
+        <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
+        <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+      </div>
+    {{/each}}
+  </div>
+{{/if}}
