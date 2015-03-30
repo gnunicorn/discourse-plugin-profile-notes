@@ -34,7 +34,7 @@
     {{#each note in notes}}
       {{#if note.staff}}
         <div class="note staff">
-          <p><span class="user"><a href="/users/{{unbound note.user.username}}">{{note.user.name}}</a> </span> </p>
+          <p><span class="user"><a href="/users/{{unbound note.user.username}}">{{note.user.username}}</a> </span> </p>
           {{{note.formatted_text}}}
           <span class="timestamp">{{format-date note.timestamp}}</span> <span class="shared">shared with all staff</span>
       {{else}}
