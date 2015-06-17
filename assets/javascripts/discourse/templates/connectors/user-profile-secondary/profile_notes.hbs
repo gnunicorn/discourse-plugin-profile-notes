@@ -8,7 +8,8 @@
       <textarea></textarea>
       <div class="controls">
         {{#if is_staff}}
-          <label><input type="checkbox" class="share-with-staff" checked="checked"> share with staff</input></label>
+          <input type="checkbox" class="share-with-staff" checked="checked">
+          <label> share with staff</label>
         {{/if}}
         <button {{action "addNote"}} class="btn btn-primary">Add Note</button> <a {{action "cancelAddNote"}}>cancel</a>
       </div>
@@ -37,19 +38,27 @@
           <p><span class="user"><a href="/users/{{unbound note.user.username}}">{{note.user.username}}</a> </span> </p>
           {{{note.formatted_text}}}
           <span class="timestamp">{{format-date note.timestamp}}</span> <span class="shared">shared with all staff</span>
+          {{#if note.topic}}
+            <span class="topic-link">
+              created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
+            </span>
+          {{/if}}
+          <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
+          <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+        </div>
       {{else}}
         <div class="note">
           {{{note.formatted_text}}}
           <p><span class="timestamp">{{format-date note.timestamp}}</span> <span class="private">for your eyes only</span></p>
+          {{#if note.topic}}
+            <span class="topic-link">
+              created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
+            </span>
+          {{/if}}
+          <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
+          <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+        </div>
       {{/if}}
-      {{#if note.topic}}
-        <span class="topic-link">
-          created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
-        </span>
-      {{/if}}
-        <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
-        <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
-      </div>
     {{/each}}
   </div>
 {{/if}}
