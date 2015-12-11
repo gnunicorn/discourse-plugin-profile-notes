@@ -1,6 +1,6 @@
 {{#if currentUser}}
   <div class="profile-notes-ui">
-    <h3><i class="fa fa-pencil-square-o"></i> Private Notes</h3>
+    <h3>{{fa-icon "pencil-square-o"}} Private Notes</h3>
     <p class="info">Notes added here are for your eyes only. No one else (including the profile you are looking at) can read them.</p>
 
     {{#if showAddNote}}
@@ -15,12 +15,12 @@
       </div>
     </div>
     {{else}}
-      <button {{action 'showAddNote'}} class="btn show-note"><i class="fa fa-plus"></i>Add Note</button>
+      <button {{action 'showAddNote'}} class="btn show-note">{{fa-icon "plus"}} Add Note</button>
 
     {{/if}}
 
     {{#if loading}}
-      <i class="fa fa-spin fa-spinner"></i>
+      {{fa-icon "spinner"}}
     {{/if}}
 
     {{#if showEditNote}}
@@ -43,8 +43,8 @@
               created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
             </span>
           {{/if}}
-          <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
-          <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+          <button {{action "showEditNote" note}} class="btn edit-note">{{fa-icon "pencil"}} Edit Note</button>
+          <button {{action "deleteNote" note}} class="btn delete-note">{{fa-icon "trash"}} Delete Note</button>
         </div>
       {{else}}
         <div class="note">
@@ -55,8 +55,8 @@
               created from <a href="/t/{{unbound note.topic.slug}}/{{unbound note.topic.id}}">{{note.topic.title}}</a>
             </span>
           {{/if}}
-          <button {{action "showEditNote" note}} class="btn edit-note"><i class="fa fa-pencil"></i>Edit Note</button>
-          <button {{action "deleteNote" note}} class="btn delete-note"><i class="fa fa-trash"></i>Delete Note</button>
+          <button {{action "showEditNote" note}} class="btn edit-note">{{fa-icon "pencil"}} Edit Note</button>
+          <button {{action "deleteNote" note}} class="btn delete-note">{{fa-icon "trash"}} Delete Note</button>
         </div>
       {{/if}}
     {{/each}}
