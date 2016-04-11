@@ -1,6 +1,8 @@
 import UserController from 'discourse/controllers/user';
 
 var injector = {
+  baseURL: "",
+
   _loadNotes: function() {
     var notes = this.get('notes');
     if (notes) return;
@@ -15,6 +17,10 @@ var injector = {
     }.bind(this));
     this.set('is_staff', Discourse.User.current().staff);
   }.observes('model').on('loaded'),
+
+  getBaseURL: function() {
+    return Discourse.getURL("/");
+  }.property("baseURL"),
 
   actions: {
 
